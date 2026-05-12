@@ -1,6 +1,18 @@
+# env
 .env
 
-# backend
-
+# macOS
+.DS_Store
 
 # frontend
+frontend/coro-app/node_modules
+frontend/coro-app/.expo
+frontend/coro-app/dist
+
+# vscode
+.vscode
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
