@@ -3,6 +3,7 @@ package songs
 import (
 	"context"
 	"database/sql"
+	"fmt"
 )
 
 type Repository struct {
@@ -14,12 +15,17 @@ func NewRepository(db *sql.DB) *Repository {
 }
 
 func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
-	query := `some query goes here`
-
+	query := `
+		SELECT song_id, song_name, page_number, song_url
+		FROM songs
+	`
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
+		fmt.Println("failed to get songs:", err)
 		return nil, err
 	}
+
+	fmt.Println("In get all songs")
 
 	defer rows.Close()
 
@@ -32,7 +38,10 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 			&song.SongID,
 			&song.SongName,
 			&song.PageNumber,
+			&song.SongURL,
 		)
+
+		fmt.Println("hereh", song)
 
 		if err != nil {
 			return nil, err
@@ -40,6 +49,8 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 
 		songs = append(songs, song)
 	}
+
+	fmt.Println("here", songs)
 
 	return songs, nil
 }
