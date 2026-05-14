@@ -3,6 +3,7 @@ package songs
 // HTTP Stuff Only
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -18,6 +19,9 @@ func (h *Handler) GetSongs(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
+
+	log.Println("GET /songs")
+
 	songs, err := h.service.GetSongs(r.Context())
 	if err != nil {
 		http.Error(w, "failed to get songs", http.StatusInternalServerError)

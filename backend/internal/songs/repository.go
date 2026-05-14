@@ -25,8 +25,6 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 		return nil, err
 	}
 
-	fmt.Println("In get all songs")
-
 	defer rows.Close()
 
 	var songs []Song
@@ -41,16 +39,12 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 			&song.SongURL,
 		)
 
-		fmt.Println("hereh", song)
-
 		if err != nil {
 			return nil, err
 		}
 
 		songs = append(songs, song)
 	}
-
-	fmt.Println("here", songs)
 
 	return songs, nil
 }

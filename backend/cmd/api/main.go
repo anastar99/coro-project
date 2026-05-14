@@ -14,7 +14,7 @@ import (
 
 func initDB() *sql.DB {
 
-	connStr := os.Getenv("DB_URL")
+	connStr := os.Getenv("DATABASE_URL")
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
@@ -26,12 +26,15 @@ func initDB() *sql.DB {
 		panic(err)
 	}
 
+	fmt.Println("Successfully connected to database!")
+
 	return db
 }
 
 func main() {
 
 	err := godotenv.Load("../.env")
+	port := ":" + os.Getenv("PORT")
 
 	if err != nil {
 		log.Fatal(err)
@@ -45,8 +48,11 @@ func main() {
 	songService := songs.NewService(songRepo)
 	songsHandler := songs.NewHandler(songService)
 
+	// Routes
 	http.HandleFunc("/songs", songsHandler.GetSongs)
 
-	fmt.Println("printing from main.go")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	// Listener
+	log.Printf("Server listening on http://localhost%s\n", port)
+	log.Fatal(http.ListenAndServe(port, nil))
+
 }
