@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/anastar99/coro-project/backend/internal/songs"
+	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -40,19 +41,23 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// Conenect to database
 	db := initDB()
 
 	defer db.Close()
+
+	// Chi Router
+	r := chi.NewRouter()
 
 	songRepo := songs.NewRepository(db)
 	songService := songs.NewService(songRepo)
 	songsHandler := songs.NewHandler(songService)
 
 	// Routes
-	http.HandleFunc("/songs", songsHandler.GetSongs)
+	r.Get("/songs", songsHandler.GetSongs)
 
 	// Listener
 	log.Printf("Server listening on http://localhost%s\n", port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	log.Fatal(http.ListenAndServe(port, r))
 
 }
