@@ -1,8 +1,6 @@
 package setlists
 
-import "fmt"
-
-func model() {
-
-	fmt.Println("Printing setlists.model.go")
+type SetList struct {
+	SetListID   int    `json:"setlist_id"`
+	SetListName string `json:"setlist_name"`
 }

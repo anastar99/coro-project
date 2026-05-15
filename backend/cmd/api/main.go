@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/anastar99/coro-project/backend/internal/setlists"
 	"github.com/anastar99/coro-project/backend/internal/songs"
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -53,9 +54,16 @@ func main() {
 	songService := songs.NewService(songRepo)
 	songsHandler := songs.NewHandler(songService)
 
-	// Routes
+	setlistRepo := setlists.NewRepository(db)
+	setlistService := setlists.NewService(setlistRepo)
+	setlistHandler := setlists.NewHanlder(setlistService)
+
+	// Songs endpoints
 	r.Get("/songs", songsHandler.GetSongs)
 	r.Post("/songs", songsHandler.CreateSong)
+
+	// Setlists endpoints
+	r.Get("/setlists", setlistHandler.GetAllSetlists)
 
 	// Listener
 	log.Printf("Server listening on http://localhost%s\n", port)
