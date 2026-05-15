@@ -16,3 +16,7 @@ func (s *Service) GetSongs(ctx context.Context) ([]Song, error) {
 
 	return s.repo.GetAllSongs(ctx)
 }
+
+func (s *Service) CreateSong(ctx context.Context, req CreateSongRequest) (Song, error) {
+	return s.repo.CreateSong(ctx, req)
+}

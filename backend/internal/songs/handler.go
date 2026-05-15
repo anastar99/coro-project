@@ -32,3 +32,24 @@ func (h *Handler) GetSongs(
 
 	json.NewEncoder(w).Encode(songs)
 }
+
+func (h *Handler) CreateSong(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+
+	var req CreateSongRequest
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+
+	if err != nil {
+		http.Error(w, "invalid json", http.StatusBadRequest)
+		return
+	}
+
+	song, err := h.service.CreateSong(r.Context(), req)
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(song)
+}

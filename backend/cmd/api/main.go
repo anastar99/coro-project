@@ -55,6 +55,7 @@ func main() {
 
 	// Routes
 	r.Get("/songs", songsHandler.GetSongs)
+	r.Post("/songs", songsHandler.CreateSong)
 
 	// Listener
 	log.Printf("Server listening on http://localhost%s\n", port)

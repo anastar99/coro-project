@@ -48,3 +48,15 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 
 	return songs, nil
 }
+
+func (r *Repository) CreateSong(ctx context.Context, req CreateSongRequest) (Song, error) {
+
+	newSong := Song{
+		SongID:     2222,
+		SongName:   req.SongName,
+		PageNumber: req.PageNumber,
+		SongURL:    req.SongURL,
+	}
+
+	return newSong, nil
+}

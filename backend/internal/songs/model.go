@@ -6,3 +6,9 @@ type Song struct {
 	PageNumber int    `json:"page_number"`
 	SongURL    string `json:"song_url"`
 }
+
+type CreateSongRequest struct {
+	SongName   string `json:"song_name"`
+	PageNumber int    `json:"page_number"`
+	SongURL    string `json:"song_url"`
+}
