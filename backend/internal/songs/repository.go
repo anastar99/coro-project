@@ -51,6 +51,10 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 
 func (r *Repository) CreateSong(ctx context.Context, req CreateSongRequest) (Song, error) {
 
+	//TODO: need to add song to database,
+	// passing the songname, pagenumber and songurl
+	// return the song created
+
 	newSong := Song{
 		SongID:     2222,
 		SongName:   req.SongName,
