@@ -67,11 +67,40 @@ func (r *Repository) CreateSong(ctx context.Context, req CreateSongRequest) (Son
 		&song.SongID,
 		&req.SongName,
 		&song.PageNumber,
-		&req.SongURL,
+		&song.SongURL,
 	)
 
 	if err != nil {
 		fmt.Println("failed to create/store song", err)
+		return song, nil
+	}
+
+	return song, nil
+}
+
+func (r *Repository) GetSong(ctx context.Context, song_id int) (Song, error) {
+
+	query := `
+		SELECT song_id, song_name, page_number, song_url
+		FROM songs
+		WHERE song_id = $1
+	`
+
+	var song Song
+
+	err := r.db.QueryRowContext(
+		ctx,
+		query,
+		song_id,
+	).Scan(
+		&song.SongID,
+		&song.SongName,
+		&song.PageNumber,
+		&song.SongURL,
+	)
+
+	if err != nil {
+		fmt.Println("failed to get song", err)
 	}
 
 	return song, nil

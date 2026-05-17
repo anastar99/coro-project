@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type Handler struct {
@@ -48,6 +51,23 @@ func (h *Handler) CreateSong(
 	}
 
 	song, err := h.service.CreateSong(r.Context(), req)
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(song)
+}
+
+func (h *Handler) GetSong(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	song_id, err := strconv.Atoi(chi.URLParam(r, "id"))
+
+	if err != nil {
+		http.Error(w, "invalid song id", http.StatusBadRequest)
+	}
+
+	song, err := h.service.GetSong(r.Context(), song_id)
 
 	w.Header().Set("Content-Type", "application/json")
 
