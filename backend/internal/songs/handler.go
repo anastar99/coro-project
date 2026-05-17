@@ -65,6 +65,7 @@ func (h *Handler) GetSong(
 
 	if err != nil {
 		http.Error(w, "invalid song id", http.StatusBadRequest)
+		return
 	}
 
 	song, err := h.service.GetSong(r.Context(), song_id)
@@ -72,4 +73,26 @@ func (h *Handler) GetSong(
 	w.Header().Set("Content-Type", "application/json")
 
 	json.NewEncoder(w).Encode(song)
+}
+
+func (h *Handler) DeleteSong(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	song_id, err := strconv.Atoi(chi.URLParam(r, "id"))
+
+	if err != nil {
+		http.Error(w, "invalid song id", http.StatusBadRequest)
+		return
+	}
+
+	err = h.service.DeleteSong(r.Context(), song_id)
+
+	if err != nil {
+		http.Error(w, "did not successfully delete song", http.StatusNotFound)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+
 }

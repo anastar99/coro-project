@@ -105,3 +105,19 @@ func (r *Repository) GetSong(ctx context.Context, song_id int) (Song, error) {
 
 	return song, nil
 }
+
+func (r *Repository) DeleteSong(ctx context.Context, song_id int) error {
+
+	query := `
+		DELETE FROM songs
+		WHERE song_id = $1
+	`
+
+	_, err := r.db.ExecContext(ctx, query, song_id)
+
+	if err != nil {
+		fmt.Println("failed to delete song", err)
+	}
+
+	return err
+}
