@@ -60,7 +60,12 @@ func main() {
 
 	// Songs endpoints
 	r.Get("/songs", songsHandler.GetSongs)
+
 	r.Post("/songs", songsHandler.CreateSong)
+
+	r.Get("/songs/{id}", songsHandler.GetSong)
+	r.Delete("/songs/{id}", songsHandler.DeleteSong)
+	r.Patch("/songs/{id}", songsHandler.UpdateSong)
 
 	// Setlists endpoints
 	r.Get("/setlists", setlistHandler.GetAllSetlists)

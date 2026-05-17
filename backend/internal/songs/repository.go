@@ -51,16 +51,96 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 
 func (r *Repository) CreateSong(ctx context.Context, req CreateSongRequest) (Song, error) {
 
-	//TODO: need to add song to database,
-	// passing the songname, pagenumber and songurl
-	// return the song created
+	query := `INSERT into 
+		songs (song_name, page_number, song_url) 
+		VALUES ($1, $2, $3)
+		RETURNING song_id, song_name, page_number, song_url`
 
-	newSong := Song{
-		SongID:     2222,
-		SongName:   req.SongName,
-		PageNumber: req.PageNumber,
-		SongURL:    req.SongURL,
+	var song Song
+	err := r.db.QueryRowContext(
+		ctx,
+		query,
+		req.SongName,
+		req.PageNumber,
+		req.SongURL,
+	).Scan(
+		&song.SongID,
+		&req.SongName,
+		&song.PageNumber,
+		&song.SongURL,
+	)
+
+	if err != nil {
+		fmt.Println("failed to create/store song", err)
+		return song, nil
 	}
 
-	return newSong, nil
+	return song, nil
+}
+
+func (r *Repository) GetSong(ctx context.Context, song_id int) (Song, error) {
+
+	query := `
+		SELECT song_id, song_name, page_number, song_url
+		FROM songs
+		WHERE song_id = $1
+	`
+
+	var song Song
+
+	err := r.db.QueryRowContext(
+		ctx,
+		query,
+		song_id,
+	).Scan(
+		&song.SongID,
+		&song.SongName,
+		&song.PageNumber,
+		&song.SongURL,
+	)
+
+	if err != nil {
+		fmt.Println("failed to get song", err)
+	}
+
+	return song, nil
+}
+
+func (r *Repository) DeleteSong(ctx context.Context, song_id int) error {
+
+	query := `
+		DELETE FROM songs
+		WHERE song_id = $1
+	`
+
+	_, err := r.db.ExecContext(ctx, query, song_id)
+
+	if err != nil {
+		fmt.Println("failed to delete song", err)
+	}
+
+	return err
+}
+
+func (r *Repository) UpdateSong(ctx context.Context, song_id int) (Song, error) {
+
+	query := `Update`
+
+	var song Song
+	err := r.db.QueryRowContext(
+		ctx,
+		query,
+		song_id,
+	).Scan(
+		&song.SongID,
+		&song.SongName,
+		&song.PageNumber,
+		&song.SongURL,
+	)
+
+	if err != nil {
+		fmt.Println("failed to update song", err)
+	}
+
+	return song, err
 }
