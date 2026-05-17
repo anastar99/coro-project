@@ -94,5 +94,22 @@ func (h *Handler) DeleteSong(
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
 
+func (h *Handler) UpdateSong(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	song_id, err := strconv.Atoi(chi.URLParam(r, "id"))
+
+	if err != nil {
+		http.Error(w, "invalid song id", http.StatusBadRequest)
+		return
+	}
+
+	song, err := h.service.UpdateSong(r.Context(), song_id)
+
+	w.Header().Set("Contect-Type", "application/json")
+
+	json.NewEncoder(w).Encode(song)
 }

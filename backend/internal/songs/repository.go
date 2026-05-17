@@ -121,3 +121,26 @@ func (r *Repository) DeleteSong(ctx context.Context, song_id int) error {
 
 	return err
 }
+
+func (r *Repository) UpdateSong(ctx context.Context, song_id int) (Song, error) {
+
+	query := `Update`
+
+	var song Song
+	err := r.db.QueryRowContext(
+		ctx,
+		query,
+		song_id,
+	).Scan(
+		&song.SongID,
+		&song.SongName,
+		&song.PageNumber,
+		&song.SongURL,
+	)
+
+	if err != nil {
+		fmt.Println("failed to update song", err)
+	}
+
+	return song, err
+}
