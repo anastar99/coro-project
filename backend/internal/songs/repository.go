@@ -51,16 +51,28 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 
 func (r *Repository) CreateSong(ctx context.Context, req CreateSongRequest) (Song, error) {
 
-	//TODO: need to add song to database,
-	// passing the songname, pagenumber and songurl
-	// return the song created
+	query := `INSERT into 
+		songs (song_name, page_number, song_url) 
+		VALUES ($1, $2, $3)
+		RETURNING song_id, song_name, page_number, song_url`
 
-	newSong := Song{
-		SongID:     2222,
-		SongName:   req.SongName,
-		PageNumber: req.PageNumber,
-		SongURL:    req.SongURL,
+	var song Song
+	err := r.db.QueryRowContext(
+		ctx,
+		query,
+		req.SongName,
+		req.PageNumber,
+		req.SongURL,
+	).Scan(
+		&song.SongID,
+		&req.SongName,
+		&song.PageNumber,
+		&req.SongURL,
+	)
+
+	if err != nil {
+		fmt.Println("failed to create/store song", err)
 	}
 
-	return newSong, nil
+	return song, nil
 }
