@@ -1,14 +1,42 @@
 
 import SongSearchBar from '@/components/songs/SongSearchBar';
-import { StyleSheet, View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
-import React , {useState} from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Modal, TextInput, FlatList } from 'react-native';
+import React , {useEffect, useState} from 'react';
+import SongCard from '@/components/songs/SongCard';
 
+type Song = {
+    song_id: number;
+    song_name: string;
+    page_number?: number | null;
+    song_url?: string | null
+};
 export default function HomeScreen() {
+    const [error, setError] = useState('');
+
     const [modalVisible, setModalVisible] = useState(false);
+
     const [songName, setSongName] = useState('');
     const [pageNumber, setPageNumber] = useState('');
     const [songURL, setSongURL] = useState('');
-    const [error, setError] = useState('');
+
+    const [songs, setSongs] = useState<Song[]>([]);
+
+    useEffect(() => {
+        async function getAllSongs() {
+            try {
+                const resp = await fetch('http://localhost:8080/songs');
+                const data = await resp.json();
+
+                setSongs(data);
+                console.log("Data", data);
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        getAllSongs();
+    }, []);
 
     async function createSong() {
 
@@ -115,7 +143,7 @@ export default function HomeScreen() {
 
         <View style={styles.header}>
 
-            <Text>5 Total Songs </Text>
+            <Text>{songs.length} Total Songs</Text>
             <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton} accessibilityRole="button" accessibilityLabel="Add">
                 <Text style={styles.addIcon}>+ Add Song</Text>
             </TouchableOpacity>
@@ -126,9 +154,20 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <View style={styles.results}>
+    <FlatList
+    data={songs}
+    keyExtractor={(item) => item.song_id.toString()}
+    renderItem={({ item }) => (
+        <SongCard
+        name={item.song_name}
+        pageNumber={item.page_number}
+        pageUrl={item.song_url}
+        />
+    )}
+    ListEmptyComponent={
         <Text style={styles.noResultsText}>no results</Text>
-      </View>
+    }
+    />
     </View>
     </>
   );
