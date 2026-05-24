@@ -59,7 +59,9 @@ func (r* Repository) DeleteSetlist(ctx context.Context, setlist_id int) error {
 		fmt.Println("failed to delete setlist", err)
 	}
 
+	return err
 }
+
 
 func (r *Repository) GetSetlist(ctx context.Context, setlistID int) (SetList, error) {
 	query := `

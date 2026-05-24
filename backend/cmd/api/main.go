@@ -69,6 +69,8 @@ func main() {
 
 	// Setlists endpoints
 	r.Get("/setlists", setlistHandler.GetAllSetlists)
+	r.Get("/setlists/{id}", setlistHandler.GetSetlist)
+
 
 	// Listener
 	log.Printf("Server listening on http://localhost%s\n", port)
