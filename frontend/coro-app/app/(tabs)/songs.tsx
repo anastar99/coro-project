@@ -1,6 +1,6 @@
 
 import SongSearchBar from '@/components/songs/SongSearchBar';
-import { StyleSheet, View, Text, TouchableOpacity, Modal, TextInput, FlatList } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Modal, TextInput, FlatList} from 'react-native';
 import React , {useEffect, useState} from 'react';
 import SongCard from '@/components/songs/SongCard';
 
@@ -10,6 +10,7 @@ type Song = {
     page_number?: number | null;
     song_url?: string | null
 };
+
 export default function HomeScreen() {
     const [error, setError] = useState('');
 
@@ -159,10 +160,7 @@ export default function HomeScreen() {
     keyExtractor={(item) => item.song_id.toString()}
     renderItem={({ item }) => (
         <SongCard
-        name={item.song_name}
-        pageNumber={item.page_number}
-        pageUrl={item.song_url}
-        />
+        song={item}        />
     )}
     ListEmptyComponent={
         <Text style={styles.noResultsText}>no results</Text>
@@ -174,10 +172,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-    errorText: {
-        color: 'red',
-        marginTop: 4,
-    },
     createSongForm: {
         flexDirection: "column",
     },
@@ -223,4 +217,8 @@ const styles = StyleSheet.create({
         color: '#000',
         fontSize: 16,
     },
+    errorText: {
+    color: 'red',
+    fontSize: 14,
+  },
 });
