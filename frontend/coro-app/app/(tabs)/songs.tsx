@@ -88,6 +88,9 @@ export default function HomeScreen() {
         setModalVisible(false);
     }
 
+    function handleDeleteSong(id: number) {
+        setSongs(prev => prev.filter(s => s.song_id !== id));
+    }
 
   return (
     <>
@@ -160,7 +163,8 @@ export default function HomeScreen() {
     keyExtractor={(item) => item.song_id.toString()}
     renderItem={({ item }) => (
         <SongCard
-        song={item}        />
+        song={item}   
+        onPress={handleDeleteSong}     />
     )}
     ListEmptyComponent={
         <Text style={styles.noResultsText}>no results</Text>

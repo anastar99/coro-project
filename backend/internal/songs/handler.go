@@ -86,14 +86,15 @@ func (h *Handler) DeleteSong(
 		return
 	}
 
-	err = h.service.DeleteSong(r.Context(), song_id)
+	song, err := h.service.DeleteSong(r.Context(), song_id)
 
 	if err != nil {
 		http.Error(w, "did not successfully delete song", http.StatusNotFound)
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	w.Header().Set("Contect-Type", "application/json")
+	json.NewEncoder(w).Encode(song)
 }
 
 func (h *Handler) UpdateSong(

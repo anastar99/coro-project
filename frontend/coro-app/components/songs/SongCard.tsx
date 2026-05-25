@@ -9,9 +9,10 @@ type SongCardProps = {
     page_number?: number | null;
     song_url?: string | null;
   };
+  onPress: (id: number) => void;
 };
 
-export default function SongCard({song}: SongCardProps) {
+export default function SongCard({song, onPress}: SongCardProps) {
   const hasPageNumber = song.page_number !== null && song.page_number !== undefined;
   const hasPageUrl = song.song_url !== null && song.song_url !== undefined && song.song_url !== '';
 
@@ -24,10 +25,16 @@ export default function SongCard({song}: SongCardProps) {
   async function deleteSong(id: number) {
 
       try {
-        await fetch(`http://localhost:8080/songs/${id}`, {
+        const resp = await fetch(`http://localhost:8080/songs/${id}`, {
           method: 'DELETE'
         });
 
+        const data = await resp.json();
+
+        console.log('Delete data', data);
+        setOpenModal(false);
+
+        onPress(id);
       } catch (error) {
         console.log(error);
       }
