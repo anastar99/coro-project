@@ -49,6 +49,46 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 	return songs, nil
 }
 
+func (r *Repository) SearchSongs(ctx context.Context, search string) ([]Song, error) {
+
+	query := `
+		SELECT song_id, song_name, page_number, song_url
+		FROM songs
+		WHERE song_name ILIKE $1
+	`
+
+	rows, err := r.db.QueryContext(ctx, query, "%"+search+"%")
+
+	if err != nil {
+		fmt.Println("failed to get songs", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var songs []Song
+
+	for rows.Next() {
+		var song Song
+
+		err := rows.Scan(
+			&song.SongID,
+			&song.SongName,
+			&song.PageNumber,
+			&song.SongURL,
+		)
+
+		if err != nil {
+			fmt.Println("failed to create/store song", err)
+			return nil, err
+		}
+
+		songs = append(songs, song)
+	}
+
+	return songs, nil
+}
+
 func (r *Repository) CreateSong(ctx context.Context, req CreateSongRequest) (Song, error) {
 
 	query := `INSERT into 

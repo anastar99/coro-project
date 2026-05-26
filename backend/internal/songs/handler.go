@@ -25,15 +25,34 @@ func (h *Handler) GetSongs(
 	// Request type log
 	log.Println("GET /songs")
 
-	songs, err := h.service.GetSongs(r.Context())
-	if err != nil {
-		http.Error(w, "failed to get songs", http.StatusInternalServerError)
-		return
+	search := r.URL.Query().Get("search")
+
+	if search != "" {
+		// search using query
+		songs, err := h.service.SearchSongs(r.Context(), search)
+
+		if err != nil {
+			http.Error(w, "failed to get songs via search", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		json.NewEncoder(w).Encode(songs)
+	} else {
+		// get all songs
+		songs, err := h.service.GetSongs(r.Context())
+
+		// songs, err := h.service.GetSongs(r.Context())
+		if err != nil {
+			http.Error(w, "failed to get songs", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		json.NewEncoder(w).Encode(songs)
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(songs)
 }
 
 func (h *Handler) CreateSong(

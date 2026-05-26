@@ -17,6 +17,10 @@ func (s *Service) GetSongs(ctx context.Context) ([]Song, error) {
 	return s.repo.GetAllSongs(ctx)
 }
 
+func (s *Service) SearchSongs(ctx context.Context, search string) ([]Song, error) {
+	return s.repo.SearchSongs(ctx, search)
+}
+
 func (s *Service) CreateSong(ctx context.Context, req CreateSongRequest) (Song, error) {
 	return s.repo.CreateSong(ctx, req)
 }

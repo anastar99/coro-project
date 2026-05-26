@@ -65,7 +65,6 @@ func main() {
 	r.Get("/songs", songsHandler.GetSongs)
 
 	r.Post("/songs", songsHandler.CreateSong)
-
 	r.Get("/songs/{id}", songsHandler.GetSong)
 	r.Delete("/songs/{id}", songsHandler.DeleteSong)
 	r.Patch("/songs/{id}", songsHandler.UpdateSong)
@@ -75,7 +74,6 @@ func main() {
 	r.Post("/setlists", setlistHandler.CreateSetlist)
 	r.Get("/setlists/{id}", setlistHandler.GetSetlist)
 	r.Delete("/setlists/{id}", setlistHandler.DeleteSetlist)
-
 
 	// Listener
 	log.Printf("Server listening on http://localhost%s\n", port)
