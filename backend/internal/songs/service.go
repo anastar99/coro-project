@@ -25,7 +25,7 @@ func (s *Service) GetSong(ctx context.Context, song_id int) (Song, error) {
 	return s.repo.GetSong(ctx, song_id)
 }
 
-func (s *Service) DeleteSong(ctx context.Context, song_id int) error {
+func (s *Service) DeleteSong(ctx context.Context, song_id int) (Song, error) {
 	return s.repo.DeleteSong(ctx, song_id)
 }
 

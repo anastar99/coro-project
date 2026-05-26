@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/anastar99/coro-project/backend/internal/middleware"
 	"github.com/anastar99/coro-project/backend/internal/setlists"
 	"github.com/anastar99/coro-project/backend/internal/songs"
 	"github.com/go-chi/chi/v5"
@@ -49,6 +50,8 @@ func main() {
 
 	// Chi Router
 	r := chi.NewRouter()
+
+	r.Use(middleware.Cors())
 
 	songRepo := songs.NewRepository(db)
 	songService := songs.NewService(songRepo)
