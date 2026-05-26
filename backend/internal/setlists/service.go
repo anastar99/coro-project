@@ -18,4 +18,7 @@ func (s *Service) GetSetlist(ctx context.Context, setlistID int) (SetList, error
 	return s.repo.GetSetlist(ctx, setlistID)
 }
 
+func (s *Service) DeleteSetlist(ctx context.Context, setlistID int) error {
+	return s.repo.DeleteSetlist(ctx, setlistID)
+}
 
