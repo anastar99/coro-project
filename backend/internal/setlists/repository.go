@@ -49,6 +49,34 @@ func (r *Repository) GetAllSetlists(ctx context.Context) ([]SetList, error) {
 	return setlists, nil
 }
 
+func (r *Repository) CreateSetlist(ctx context.Context, req CreateSetList) (SetList, error) {
+	query := `
+		INSERT INTO setlists (setlist_name, service_date)
+		VALUES ($1, $2)
+		RETURNING setlist_id, setlist_name, service_date
+	`
+
+	var setlist SetList
+
+	err := r.db.QueryRowContext(
+		ctx,
+		query,
+		req.SetListName,
+		req.ServiceDate,
+	).Scan(
+		&setlist.SetListID,
+		&setlist.SetListName,
+		&setlist.ServiceDate,
+	)
+
+	if err != nil {
+		fmt.Println("failed to create/store setlist:", err)
+		return setlist, err
+	}
+
+	return setlist, nil
+}
+
 func (r *Repository) DeleteSetlist(ctx context.Context, setlistID int) error {
 	deleteSetlistSongsQuery := `
 		DELETE FROM setlist_songs
@@ -133,3 +161,4 @@ func (r *Repository) GetSetlist(ctx context.Context, setlistID int) (SetList, er
 
 	return setlist, nil
 }
+

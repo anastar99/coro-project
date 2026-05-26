@@ -69,3 +69,26 @@ func (h *Handler) DeleteSetlist(
 
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (h *Handler) CreateSetlist(
+	w http.ResponseWriter,
+	r *http.Request,
+) {
+	var req CreateSetList
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	setlist, err := h.service.CreateSetlist(r.Context(), req)
+	if err != nil {
+		http.Error(w, "failed to create setlist", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(setlist)
+}

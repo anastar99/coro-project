@@ -69,6 +69,7 @@ func main() {
 
 	// Setlists endpoints
 	r.Get("/setlists", setlistHandler.GetAllSetlists)
+	r.Post("/setlists", setlistHandler.CreateSetlist)
 	r.Get("/setlists/{id}", setlistHandler.GetSetlist)
 	r.Delete("/setlists/{id}", setlistHandler.DeleteSetlist)
 

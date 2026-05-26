@@ -22,3 +22,6 @@ func (s *Service) DeleteSetlist(ctx context.Context, setlistID int) error {
 	return s.repo.DeleteSetlist(ctx, setlistID)
 }
 
+func (s *Service) CreateSetlist(ctx context.Context, req CreateSetList) (SetList, error) {
+	return s.repo.CreateSetlist(ctx, req)
+}
