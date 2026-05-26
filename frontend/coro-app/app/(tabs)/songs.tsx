@@ -39,6 +39,20 @@ export default function HomeScreen() {
         getAllSongs();
     }, []);
 
+    async function searchSong(search: string) {
+
+        try {
+
+            const resp = await fetch(`http://localhost:8080/songs?search=${search}`)
+            const data = await resp.json();
+
+            setSongs(data);
+
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
     async function createSong() {
 
         if (!songName.trim()) {
@@ -154,7 +168,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.searchWrapper}>
-          <SongSearchBar />
+          <SongSearchBar onType={searchSong}/>
         </View>
       </View>
 
