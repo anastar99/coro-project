@@ -1,10 +1,11 @@
 package setlists
-import "github.com/anastar99/coro-project/backend/internal/songs"
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/anastar99/coro-project/backend/internal/songs"
 )
 
 type Repository struct {
@@ -14,7 +15,6 @@ type Repository struct {
 func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
-
 
 func (r *Repository) GetAllSetlists(ctx context.Context) ([]SetList, error) {
 	query := `SELECT setlist_id, setlist_name FROM setlists`
@@ -49,16 +49,67 @@ func (r *Repository) GetAllSetlists(ctx context.Context) ([]SetList, error) {
 	return setlists, nil
 }
 
-func (r* Repository) DeleteSetlist(ctx context.Context, setlist_id int) error {
-	query := `DELETE FROM setlist
-			WHERE setlist_id = $1`
-	
-	_, err := r.db.ExecContext(ctx, query, setlist_id)
+func (r *Repository) CreateSetlist(ctx context.Context, req CreateSetList) (SetList, error) {
+	query := `
+		INSERT INTO setlists (setlist_name, service_date)
+		VALUES ($1, $2)
+		RETURNING setlist_id, setlist_name, service_date
+	`
+
+	var setlist SetList
+
+	err := r.db.QueryRowContext(
+		ctx,
+		query,
+		req.SetListName,
+		req.ServiceDate,
+	).Scan(
+		&setlist.SetListID,
+		&setlist.SetListName,
+		&setlist.ServiceDate,
+	)
 
 	if err != nil {
-		fmt.Println("failed to delete setlist", err)
+		fmt.Println("failed to create/store setlist:", err)
+		return setlist, err
 	}
 
+	return setlist, nil
+}
+
+func (r *Repository) DeleteSetlist(ctx context.Context, setlistID int) error {
+	deleteSetlistSongsQuery := `
+		DELETE FROM setlist_songs
+		WHERE setlist_id = $1
+	`
+
+	deleteSetlistQuery := `
+		DELETE FROM setlists
+		WHERE setlist_id = $1
+	`
+
+	_, err := r.db.ExecContext(ctx, deleteSetlistSongsQuery, setlistID)
+	if err != nil {
+		fmt.Println("failed to delete songs from setlist:", err)
+		return err
+	}
+
+	result, err := r.db.ExecContext(ctx, deleteSetlistQuery, setlistID)
+	if err != nil {
+		fmt.Println("failed to delete setlist:", err)
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
 
 func (r *Repository) GetSetlist(ctx context.Context, setlistID int) (SetList, error) {
@@ -110,3 +161,4 @@ func (r *Repository) GetSetlist(ctx context.Context, setlistID int) (SetList, er
 
 	return setlist, nil
 }
+

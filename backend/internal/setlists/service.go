@@ -13,3 +13,15 @@ func NewService(repo *Repository) *Service {
 func (s *Service) GetAllSetlists(ctx context.Context) ([]SetList, error) {
 	return s.repo.GetAllSetlists(ctx)
 }
+
+func (s *Service) GetSetlist(ctx context.Context, setlistID int) (SetList, error) {
+	return s.repo.GetSetlist(ctx, setlistID)
+}
+
+func (s *Service) DeleteSetlist(ctx context.Context, setlistID int) error {
+	return s.repo.DeleteSetlist(ctx, setlistID)
+}
+
+func (s *Service) CreateSetlist(ctx context.Context, req CreateSetList) (SetList, error) {
+	return s.repo.CreateSetlist(ctx, req)
+}

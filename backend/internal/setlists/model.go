@@ -5,9 +5,11 @@ import "github.com/anastar99/coro-project/backend/internal/songs"
 type SetList struct {
 	SetListID    int          `json:"setlist_id"`
 	SetListName  string       `json:"setlist_name"`
+	ServiceDate  string       `json:"service_date"`
 	SetListSongs []songs.Song `json:"songs"`
 }
 
 type CreateSetList struct {
-	SetListName  string       `json:"setlist_name"`
+	SetListName string `json:"setlist_name"`
+	ServiceDate string `json:"service_date"`
 }

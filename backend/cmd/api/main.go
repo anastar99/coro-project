@@ -59,7 +59,7 @@ func main() {
 
 	setlistRepo := setlists.NewRepository(db)
 	setlistService := setlists.NewService(setlistRepo)
-	setlistHandler := setlists.NewHanlder(setlistService)
+	setlistHandler := setlists.NewHandler(setlistService)
 
 	// Songs endpoints
 	r.Get("/songs", songsHandler.GetSongs)
@@ -72,6 +72,10 @@ func main() {
 
 	// Setlists endpoints
 	r.Get("/setlists", setlistHandler.GetAllSetlists)
+	r.Post("/setlists", setlistHandler.CreateSetlist)
+	r.Get("/setlists/{id}", setlistHandler.GetSetlist)
+	r.Delete("/setlists/{id}", setlistHandler.DeleteSetlist)
+
 
 	// Listener
 	log.Printf("Server listening on http://localhost%s\n", port)
