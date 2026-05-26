@@ -9,5 +9,5 @@ type SetList struct {
 }
 
 type CreateSetList struct {
-	SetListName  string       `json:"setlist_name"`
+	SetListName  string `json:"setlist_name"`
 }
