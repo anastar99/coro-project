@@ -161,7 +161,7 @@ export default function HomeScreen() {
 
         <View style={styles.header}>
 
-            <Text>{songs.length} Total Songs</Text>
+            <Text>{songs ? songs.length : 0} Total Songs</Text>
             <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.addButton} accessibilityRole="button" accessibilityLabel="Add">
                 <Text style={styles.addIcon}>+ Add Song</Text>
             </TouchableOpacity>
