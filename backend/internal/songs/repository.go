@@ -173,14 +173,26 @@ func (r *Repository) DeleteSong(ctx context.Context, song_id int) (Song, error) 
 	return song, err
 }
 
-func (r *Repository) UpdateSong(ctx context.Context, song_id int) (Song, error) {
+func (r *Repository) UpdateSong(ctx context.Context, song_id int, req_data UpdateSongRequest) (Song, error) {
 
-	query := `Update`
+	fmt.Println(song_id, req_data)
+	query := `
+		UPDATE songs SET
+			song_name = $1,
+			page_number = $2,
+			song_url = $3
+		WHERE
+			song_id = $4
+		RETURNING song_id, song_name, page_number, song_url;
+	`
 
 	var song Song
 	err := r.db.QueryRowContext(
 		ctx,
 		query,
+		req_data.SongName,
+		req_data.PageNumber,
+		req_data.SongURL,
 		song_id,
 	).Scan(
 		&song.SongID,

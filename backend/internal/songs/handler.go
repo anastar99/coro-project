@@ -120,14 +120,22 @@ func (h *Handler) UpdateSong(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
-	song_id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	songID, err := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if err != nil {
 		http.Error(w, "invalid song id", http.StatusBadRequest)
 		return
 	}
 
-	song, err := h.service.UpdateSong(r.Context(), song_id)
+	var reqData UpdateSongRequest
+
+	err = json.NewDecoder(r.Body).Decode(&reqData)
+
+	if err != nil {
+		http.Error(w, "invalid song data", http.StatusBadRequest)
+	}
+
+	song, err := h.service.UpdateSong(r.Context(), songID, reqData)
 
 	w.Header().Set("Contect-Type", "application/json")
 
