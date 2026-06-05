@@ -40,6 +40,30 @@ export default function SongCard({song, onPress}: SongCardProps) {
       }
   }
 
+  async function updateSong(id: number) {
+
+    try {
+      const resp = await fetch(`http://localhost:8080/songs/${id}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          song_name: editSongName,
+          page_number: Number(editPageNumber),
+          song_url: editSongURL,
+        })
+      });
+
+      const data = await resp.json();
+
+      console.log("Updated data", data);
+      
+      setOpenModal(false);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async function openEditModal(id: number) {
 
       setOpenModal(true);
@@ -140,7 +164,7 @@ export default function SongCard({song, onPress}: SongCardProps) {
     
             <Pressable
               style={[styles.button, styles.saveButton]}
-              onPress={() => setOpenModal(false)}
+              onPress={() => updateSong(song.song_id)}
             >
               <Text style={styles.buttonText}>Save</Text>
             </Pressable>
