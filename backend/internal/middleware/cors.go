@@ -12,7 +12,7 @@ func Cors() func(http.Handler) http.Handler {
 			"http://localhost:8081",
 		},
 		AllowedMethods: []string{
-			"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATH",
+			"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATH", "PATCH",
 		},
 		AllowedHeaders: []string{
 			"Accept", "Authorization", "Content-Type",
