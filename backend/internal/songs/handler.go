@@ -25,6 +25,9 @@ func (h *Handler) GetSongs(
 	// Request type log
 	log.Println("GET /songs")
 
+	// default will be pagination
+	// search query will be "extra"
+
 	search := r.URL.Query().Get("search")
 
 	if search != "" {

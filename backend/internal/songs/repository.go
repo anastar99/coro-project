@@ -17,7 +17,7 @@ func NewRepository(db *sql.DB) *Repository {
 func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 	query := `
 		SELECT song_id, song_name, page_number, song_url
-		FROM songs
+		FROM songs ORDER BY song_id ASC LIMIT 4
 	`
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
