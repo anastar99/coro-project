@@ -1,14 +1,26 @@
 import { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 
-export default function SongSearchBar() {
+
+type SongSearchBarProps = {
+    onType: (search: string) => void
+}
+export default function SongSearchBar({onType} : SongSearchBarProps) {
+
 
     const [text, setText] = useState('');
+
+    function handleSearch(search: string) {
+
+        setText(search);
+        onType(search);
+    }
+    
     return (
         <View style={styles.container}>
             <TextInput
             style={styles.input}
-            onChangeText={setText}
+            onChangeText={(text) => handleSearch(text)}
             value={text}
             placeholder="Search a song"
             />

@@ -17,7 +17,7 @@ func NewRepository(db *sql.DB) *Repository {
 func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 	query := `
 		SELECT song_id, song_name, page_number, song_url
-		FROM songs
+		FROM songs ORDER BY song_id ASC LIMIT 4
 	`
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
@@ -40,6 +40,46 @@ func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
 		)
 
 		if err != nil {
+			return nil, err
+		}
+
+		songs = append(songs, song)
+	}
+
+	return songs, nil
+}
+
+func (r *Repository) SearchSongs(ctx context.Context, search string) ([]Song, error) {
+
+	query := `
+		SELECT song_id, song_name, page_number, song_url
+		FROM songs
+		WHERE song_name ILIKE $1
+	`
+
+	rows, err := r.db.QueryContext(ctx, query, "%"+search+"%")
+
+	if err != nil {
+		fmt.Println("failed to get songs", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var songs []Song
+
+	for rows.Next() {
+		var song Song
+
+		err := rows.Scan(
+			&song.SongID,
+			&song.SongName,
+			&song.PageNumber,
+			&song.SongURL,
+		)
+
+		if err != nil {
+			fmt.Println("failed to create/store song", err)
 			return nil, err
 		}
 
@@ -133,14 +173,26 @@ func (r *Repository) DeleteSong(ctx context.Context, song_id int) (Song, error) 
 	return song, err
 }
 
-func (r *Repository) UpdateSong(ctx context.Context, song_id int) (Song, error) {
+func (r *Repository) UpdateSong(ctx context.Context, song_id int, req_data UpdateSongRequest) (Song, error) {
 
-	query := `Update`
+	fmt.Println(song_id, req_data)
+	query := `
+		UPDATE songs SET
+			song_name = $1,
+			page_number = $2,
+			song_url = $3
+		WHERE
+			song_id = $4
+		RETURNING song_id, song_name, page_number, song_url;
+	`
 
 	var song Song
 	err := r.db.QueryRowContext(
 		ctx,
 		query,
+		req_data.SongName,
+		req_data.PageNumber,
+		req_data.SongURL,
 		song_id,
 	).Scan(
 		&song.SongID,

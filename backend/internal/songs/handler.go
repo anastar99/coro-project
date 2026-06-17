@@ -25,15 +25,37 @@ func (h *Handler) GetSongs(
 	// Request type log
 	log.Println("GET /songs")
 
-	songs, err := h.service.GetSongs(r.Context())
-	if err != nil {
-		http.Error(w, "failed to get songs", http.StatusInternalServerError)
-		return
+	// default will be pagination
+	// search query will be "extra"
+
+	search := r.URL.Query().Get("search")
+
+	if search != "" {
+		// search using query
+		songs, err := h.service.SearchSongs(r.Context(), search)
+
+		if err != nil {
+			http.Error(w, "failed to get songs via search", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		json.NewEncoder(w).Encode(songs)
+	} else {
+		// get all songs
+		songs, err := h.service.GetSongs(r.Context())
+
+		// songs, err := h.service.GetSongs(r.Context())
+		if err != nil {
+			http.Error(w, "failed to get songs", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		json.NewEncoder(w).Encode(songs)
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(songs)
 }
 
 func (h *Handler) CreateSong(
@@ -101,14 +123,22 @@ func (h *Handler) UpdateSong(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
-	song_id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	songID, err := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if err != nil {
 		http.Error(w, "invalid song id", http.StatusBadRequest)
 		return
 	}
 
-	song, err := h.service.UpdateSong(r.Context(), song_id)
+	var reqData UpdateSongRequest
+
+	err = json.NewDecoder(r.Body).Decode(&reqData)
+
+	if err != nil {
+		http.Error(w, "invalid song data", http.StatusBadRequest)
+	}
+
+	song, err := h.service.UpdateSong(r.Context(), songID, reqData)
 
 	w.Header().Set("Contect-Type", "application/json")
 
