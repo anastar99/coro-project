@@ -1,6 +1,6 @@
 import { Trash2 } from 'lucide-react-native';
 import { useState } from 'react';
-import { Text, StyleSheet, Pressable, Linking, Modal, View, TextInput} from 'react-native';
+import { Text, StyleSheet, Pressable, Linking, Modal, View, TextInput, Platform} from 'react-native';
 
 type SongCardProps = {
   song: {
@@ -202,14 +202,20 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 12,
 
-    // shadow (iOS)
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-
-    // shadow (Android)
-    elevation: 3,
+    ...Platform.select({
+        web: {
+            boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
+        },
+        ios: {
+            shadowColor: '#000',
+            shadowOpacity: 0.1,
+            shadowRadius: 6,
+            shadowOffset: { width: 0, height: 2 },
+        },
+        android: {
+            elevation: 3,
+        },
+    }),
   },
 
   title: {
