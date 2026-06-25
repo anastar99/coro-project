@@ -25,37 +25,50 @@ func (h *Handler) GetSongs(
 	// Request type log
 	log.Println("GET /songs")
 
-	// default will be pagination
-	// search query will be "extra"
-
 	search := r.URL.Query().Get("search")
+	last_id := r.URL.Query().Get("last_id")
 
-	if search != "" {
-		// search using query
-		songs, err := h.service.SearchSongs(r.Context(), search)
+	var lastID *int
 
+	if last_id != "" {
+		id, err := strconv.Atoi(last_id)
 		if err != nil {
-			http.Error(w, "failed to get songs via search", http.StatusInternalServerError)
+			http.Error(w, "invalid last_id", http.StatusBadRequest)
 			return
 		}
-
-		w.Header().Set("Content-Type", "application/json")
-
-		json.NewEncoder(w).Encode(songs)
-	} else {
-		// get all songs
-		songs, err := h.service.GetSongs(r.Context())
-
-		// songs, err := h.service.GetSongs(r.Context())
-		if err != nil {
-			http.Error(w, "failed to get songs", http.StatusInternalServerError)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-
-		json.NewEncoder(w).Encode(songs)
+		lastID = &id
 	}
+
+	// TODO: we should probably clean the search query? remove extra spaces
+	// though i guess spaces are still part of the search query.
+	// Leaving comment here to ponder
+
+	songs, err := h.service.GetSongs(r.Context(), lastID, search)
+
+	if err != nil {
+		http.Error(w, "failed to get songs", http.StatusInternalServerError)
+		return
+	}
+
+	var nextLastID *int
+
+	if len(songs) > 0 {
+		id := songs[len(songs)-1].SongID
+		nextLastID = &id
+	}
+
+	resp := struct {
+		Songs      []Song `json:"songs"`
+		NextLastID *int   `jsong:"next_last_id"`
+	}{
+		Songs:      songs,
+		NextLastID: nextLastID,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+
+	log.Println("last id", lastID)
 }
 
 func (h *Handler) CreateSong(
