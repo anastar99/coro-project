@@ -11,10 +11,10 @@ func NewService(repo *Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) GetSongs(ctx context.Context) ([]Song, error) {
+func (s *Service) GetSongs(ctx context.Context, last_id *int, search_query string) ([]Song, error) {
 	// business logic could go here later
 
-	return s.repo.GetAllSongs(ctx)
+	return s.repo.GetSongs(ctx, last_id, search_query)
 }
 
 func (s *Service) SearchSongs(ctx context.Context, search string) ([]Song, error) {

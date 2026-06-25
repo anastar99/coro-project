@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 )
 
 type Repository struct {
@@ -14,10 +15,66 @@ func NewRepository(db *sql.DB) *Repository {
 	return &Repository{db: db}
 }
 
-func (r *Repository) GetAllSongs(ctx context.Context) ([]Song, error) {
+func (r *Repository) GetSongs(ctx context.Context, last_id *int, search_query string) ([]Song, error) {
+
+	// TODO: we should probably add a parameter where we can specify the limit
+	query := `SELECT song_id, song_name, page_number, song_url FROM songs`
+
+	var conditions []string
+	args := []any{}
+
+	if search_query != "" {
+		args = append(args, search_query)
+		conditions = append(conditions, fmt.Sprintf("song_name ILIKE $%d", len(args)))
+	}
+
+	if last_id != nil {
+		args = append(args, *last_id)
+		conditions = append(conditions, fmt.Sprintf("song_id > $%d", len(args)))
+	}
+
+	if len(conditions) > 0 {
+		query += " WHERE " + strings.Join(conditions, " AND ")
+	}
+
+	query += " ORDER BY song_id ASC LIMIT 5"
+
+	rows, err := r.db.QueryContext(ctx, query, args...)
+
+	if err != nil {
+		fmt.Println("failed to get songs:", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var songs []Song
+
+	for rows.Next() {
+		var song Song
+
+		err := rows.Scan(
+			&song.SongID,
+			&song.SongName,
+			&song.PageNumber,
+			&song.SongURL,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		songs = append(songs, song)
+	}
+
+	return songs, nil
+
+}
+
+func (r *Repository) GetAllSongs(ctx context.Context, last_id *int) ([]Song, error) {
 	query := `
 		SELECT song_id, song_name, page_number, song_url
-		FROM songs ORDER BY song_id ASC LIMIT 4
+		FROM songs ORDER BY song_id ASC LIMIT 5
 	`
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
