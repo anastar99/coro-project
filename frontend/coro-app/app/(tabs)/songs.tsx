@@ -2,13 +2,13 @@ import SongCard from "@/components/songs/SongCard";
 import SongSearchBar from "@/components/songs/SongSearchBar";
 import React, { useEffect, useState } from "react";
 import {
-    FlatList,
-    Modal,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 type Song = {
