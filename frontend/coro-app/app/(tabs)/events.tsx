@@ -1,8 +1,39 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import DayCard from "@/components/events/DayCard";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function Events() {
+
+  const [days, setDays] = useState<Date[]>([]);
+  function generateDays(count: number) {
+    const gen_days: Date[] = [];
+    const today = new Date();
+
+    for (let i = 0; i < count; i++) {
+      const day = new Date(today);
+      day.setDate(today.getDate() + i);
+      gen_days.push(day);
+    }
+
+    return gen_days;
+  }
+
+  useEffect(() => {
+    try {
+      const days = generateDays(30);
+      setDays(days)
+    } catch (error) {
+    }
+  }, [])
+
   function createEvent() {
     console.log("open modal where user specifies even info");
+  }
+
+  function getEventsForDate(date: Date) {
+
+    console.log("we need to fetch all the events for the clicked date:", date);
   }
   return (
     <View style={style.container}>
@@ -20,8 +51,29 @@ export default function Events() {
       </View>
 
       <View style={style.body}>
-        <View>
-          <Text>Carousel</Text>
+        <View style={style.carousel}>
+          <View style={style.carouselArrow}>
+            <IconSymbol size={20} name="paperplane.fill" color="#fff"/>
+          </View>
+
+          <View style={{ flex: 1 }}>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              data={days}
+              keyExtractor={(item) => item.toISOString()}
+              renderItem={({ item }) => (
+
+                <DayCard 
+                  date={item} onPress={getEventsForDate}
+                />
+              )}
+            />
+          </View>
+
+          <View style={style.carouselArrow}>
+            <IconSymbol size={20} name="paperplane.fill" color="#fff"/>
+          </View>
         </View>
 
         <View>
@@ -49,11 +101,11 @@ const style = StyleSheet.create({
     alignItems: "center",
   },
   headerOne: {
-    fontSize: 20,
+    fontSize: 15,
   },
 
   headerTwo: {
-    fontSize: 25,
+    fontSize: 18,
   },
 
   createEventBtn: {
@@ -80,4 +132,23 @@ const style = StyleSheet.create({
     width: 80,
     height: 80,
   },
+
+  carousel: {
+    width: "100%",
+    backgroundColor: "#000",
+    flexDirection: "row",
+    justifyContent: "space-around"
+  },
+  carouselArrow: {
+    width: "10%",
+    height: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  dayItem: {
+    paddingHorizontal: 12,
+    alignItems: 'center',
+  }
 });
