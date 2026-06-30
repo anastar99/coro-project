@@ -1,11 +1,20 @@
 import DayCard from "@/components/events/DayCard";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function Events() {
-
   const [days, setDays] = useState<Date[]>([]);
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [selectedDayEvents, setSelectedDayEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+
   function generateDays(count: number) {
     const gen_days: Date[] = [];
     const today = new Date();
@@ -22,17 +31,17 @@ export default function Events() {
   useEffect(() => {
     try {
       const days = generateDays(30);
-      setDays(days)
-    } catch (error) {
-    }
-  }, [])
+      setSelectedDay(days[0].toISOString());
+      setDays(days);
+    } catch (error) {}
+  }, []);
 
   function createEvent() {
     console.log("open modal where user specifies even info");
   }
 
   function getEventsForDate(date: Date) {
-
+    setSelectedDay(date.toISOString());
     console.log("we need to fetch all the events for the clicked date:", date);
   }
   return (
@@ -53,7 +62,7 @@ export default function Events() {
       <View style={style.body}>
         <View style={style.carousel}>
           <View style={style.carouselArrow}>
-            <IconSymbol size={20} name="paperplane.fill" color="#fff"/>
+            <IconSymbol size={20} name="paperplane.fill" color="#fff" />
           </View>
 
           <View style={{ flex: 1 }}>
@@ -63,16 +72,17 @@ export default function Events() {
               data={days}
               keyExtractor={(item) => item.toISOString()}
               renderItem={({ item }) => (
-
-                <DayCard 
-                  date={item} onPress={getEventsForDate}
+                <DayCard
+                  date={item}
+                  onPress={getEventsForDate}
+                  isSelected={selectedDay === item.toISOString()}
                 />
               )}
             />
           </View>
 
           <View style={style.carouselArrow}>
-            <IconSymbol size={20} name="paperplane.fill" color="#fff"/>
+            <IconSymbol size={20} name="paperplane.fill" color="#fff" />
           </View>
         </View>
 
@@ -137,7 +147,7 @@ const style = StyleSheet.create({
     width: "100%",
     backgroundColor: "#000",
     flexDirection: "row",
-    justifyContent: "space-around"
+    justifyContent: "space-around",
   },
   carouselArrow: {
     width: "10%",
@@ -149,6 +159,6 @@ const style = StyleSheet.create({
 
   dayItem: {
     paddingHorizontal: 12,
-    alignItems: 'center',
-  }
+    alignItems: "center",
+  },
 });
