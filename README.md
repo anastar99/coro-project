@@ -1,4 +1,5 @@
 # coro-project
-<img width="127" height="72" alt="Screenshot 2026-06-30 at 11 29 36 PM" src="https://github.com/user-attachments/assets/f8aca46d-74e3-4640-a111-efe6b91beb42" />
+
+<img width="149" height="73" alt="Screenshot 2026-06-30 at 11 31 54 PM" src="https://github.com/user-attachments/assets/c6b7d8a6-ebbe-4ab0-b0a4-a710c40e2498" />
 
 Helping keep musicians and bands organized
