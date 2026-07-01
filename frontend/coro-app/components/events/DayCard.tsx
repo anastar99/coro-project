@@ -34,7 +34,7 @@ const style = StyleSheet.create({
   },
 
   dayNotSelected: {
-    borderColor: "#5e5e5e",
+    borderColor: "#474747",
   },
 
   day: {
